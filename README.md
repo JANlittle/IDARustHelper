@@ -34,7 +34,7 @@ Arm, RISC-V should be work well also, both 32bit and 64bit.
 
 For the part of demangling, I combine the work of [teambi0s](https://github.com/teambi0s/rust_demangler) and [timetravelthree](https://github.com/timetravelthree/IDARustDemangler). Teambi0s's work can demangle most symbols, and timetravelthree's work was able to re-mangle the symbols to make them more friendly to display in IDA.
 
-Re-mangle can't quite get the symbols to display perfectly in IDA, because IDA has a character limit for symbols, but I think it's enough. If you want full display, you can modify the character whitelist in `ida.cfg` to bypass the restriction.
+Re-mangle can't quite get the symbols to display perfectly in IDA, because IDA has a character limit for symbols, but I think it's enough. If you want full display, you can modify the character whitelist in `ida.cfg`(like `NameChars` variant) to bypass the restriction.
 
 ### Add Rust type
 

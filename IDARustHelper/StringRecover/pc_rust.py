@@ -20,9 +20,8 @@ class pc_rust_t(proc_rust_t):
             return -1
         
     # mov [rsp+238h+var_60.length], 7
-    def is_rlen_stk_insn(self, insn: insn_t, stkoff: int) -> bool:
-        # R_sp == 4
-        return insn.itype == NN_mov and insn.Op1.type == o_displ and insn.Op1.reg == 4 and insn.Op1.addr == stkoff + self.bitness // 8 and insn.Op2.type == o_imm
+    def is_rlen_stk_insn(self, insn: insn_t, rbase:int, stkoff: int) -> bool:
+        return insn.itype == NN_mov and insn.Op1.type == o_displ and insn.Op1.reg == rbase and insn.Op1.addr == stkoff + self.bitness // 8 and insn.Op2.type == o_imm
     
     def get_strlen(self, insn_ea: int, strlit_ea: int) -> int:
         strlen = super().get_strlen(insn_ea, strlit_ea)
@@ -41,9 +40,14 @@ class pc_rust_t(proc_rust_t):
                 # lea rax, aImagine
                 # mov [rsp+238h+var_60.data_ptr], rax
                 # mov [rsp+238h+var_60.length], 7
-                if insn.itype == NN_mov and insn.Op1.type == o_displ and insn.Op1.reg == 4 and insn.Op2.is_reg(rptr):
+                # or another situation like:
+                # lea rax, unk_9E64D
+                # mov [rbx+580h], rax
+                # mov qword ptr [rbx+588h], 6Dh ; 'm'
+                if insn.itype == NN_mov and insn.Op1.type == o_displ and insn.Op2.is_reg(rptr):
                     stkoff = insn.Op1.addr
-                    if decode_insn(insn, next_ea + insn.size) > 0 and self.is_rlen_stk_insn(insn, stkoff):
+                    rbase = insn.Op1.reg
+                    if decode_insn(insn, next_ea + insn.size) > 0 and self.is_rlen_stk_insn(insn, rbase, stkoff):
                         return insn.Op2.value
                     
             # .text:000000014009E009                 lea     rdx, unk_1401D0BF5
