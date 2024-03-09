@@ -11,7 +11,7 @@ class riscv_rust_t(proc_rust_t):
         super().__init__()
         self.look_forward = 5
         # hope to someone will implement ev_get_cc_regs
-        self.regs.set(ARGREGS_GP_ONLY, rv_riscv, None)
+        self.regs.set(ARGREGS_GP_ONLY, rv_riscv, None)    # How to pass const int * parm...?
 
     def insn_get_rptr(self, insn: insn_t) -> int:
         # la a0, unk_2672B

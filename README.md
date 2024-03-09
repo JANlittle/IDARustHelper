@@ -26,6 +26,9 @@ Also should work with IDA Pro 8.x.
 
 Arm, RISC-V should be work well also, both 32bit and 64bit.
 
+## Known Issue
+- `callregs_t.set` need a `int const *` parm, but I really don't know how to pass it...
+
 ## How it work?
 
 **Before I start, I would like to sincerely thank [teambi0s](https://github.com/teambi0s/rust_demangler), [timetravelthree](https://github.com/timetravelthree/IDARustDemangler), [hex-rays](https://hex-rays.com/blog/rust-analysis-plugin-tech-preview/) for their work!**

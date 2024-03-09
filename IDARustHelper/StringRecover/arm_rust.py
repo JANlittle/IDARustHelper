@@ -10,7 +10,7 @@ class arm_rust_t(proc_rust_t):
         super().__init__()
         self.look_forward = 8
         if self.is64:
-            self.regs.set(ARGREGS_GP_ONLY, rv_arm, None)
+            self.regs.set(ARGREGS_GP_ONLY, rv_arm, None)    # How to pass const int * parm...?
 
     def insn_get_rptr(self, insn: insn_t) -> int:
         if self.is64:
