@@ -1,6 +1,7 @@
 from idaapi import *
 import idautils
 from rust_demangler import demangle
+import string
 
 class IDARustDemangler():
     """
@@ -29,8 +30,8 @@ class IDARustDemangler():
             hash = symbol.split(self.hash_prefix)[-1].rstrip("E")
 
             # If the hash length is not 16 skip as it is not a valid rust legacy symbol
-            if len(hash) != 16:
-                return
+            if len(hash) < 16 or any([c not in string.hexdigits for c in hash[:16]]):
+                hash = ""
 
             self.queue[address, hash] = symbol
         else:
@@ -68,9 +69,12 @@ class IDARustDemangler():
             # set the name and add the hash at the end
             # print(f"[*] {address:#x} -> {normalized + str(len(hash)) + hash}")
             if hash == "":
-                set_name(address, normalized)
+                is_set = set_name(address, normalized)
             else:
-                set_name(address, normalized + str(len(hash)) + hash)
+                is_set = set_name(address, normalized + str(len(hash)) + hash)
+            if not is_set and self.debug:
+                print(
+                    f"[ERROR] {address:#016x} -> sym:'{symbol}', hash: '{hash}', normalized: '{normalized}'")
             self.num_resolved += 1
 
     def ida_normalize(self, name: str) -> str:
