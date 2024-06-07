@@ -43,18 +43,24 @@ class pc_rust_t(proc_rust_t):
                             return -1
                     # lea rax, aImagine
                     # mov [rsp+238h+var_60.data_ptr], rax
+                    # ......
                     # mov [rsp+238h+var_60.length], 7
                     # or another situation like:
                     # lea rax, unk_9E64D
                     # mov [rbx+580h], rax
+                    # ......
                     # mov qword ptr [rbx+588h], 6Dh ; 'm'
                     if insn.itype == NN_mov and insn.Op1.type == o_displ and insn.Op2.is_reg(rptr):
                         stkoff = insn.Op1.addr
                         rbase = insn.Op1.reg
-                        if decode_insn(insn, next_ea + insn.size) > 0 and self.is_rlen_stk_insn(insn, rbase, stkoff):
-                            return insn.Op2.value
-                        else:
-                            return -1
+                        for _ in range(self.look_forward):
+                            next_ea += insn.size
+                            if decode_insn(insn, next_ea) > 0:
+                                if self.is_rlen_stk_insn(insn, rbase, stkoff):
+                                    return insn.Op2.value
+                            else:
+                                return -1
+                        return -1
                     elif insn.itype == NN_push and insn.Op1.type == o_imm:
                         return insn.Op1.value
                     
