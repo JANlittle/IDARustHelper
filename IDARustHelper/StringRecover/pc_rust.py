@@ -79,5 +79,16 @@ class pc_rust_t(proc_rust_t):
             # .text:000000000001DF0E                 lea     rax, unk_40AE0  ; jumptable 000000000001DCEB case 33
             # .text:000000000001DF15                 mov     ecx, 10h
             # .text:000000000001DF1A                 jmp     short loc_1DF7C
+        else:   # 32-bit, namely x86
+            insn = insn_t()
+            if decode_insn(insn, insn_ea) == 0:
+                return -1
+            # push    0Bh
+            # push    offset unk_A297E8
+            if insn.itype == NN_push:
+                if decode_prev_insn(insn, insn_ea) == 0:
+                    return -1
+                if insn.itype == NN_push and insn.Op1.type == o_imm:
+                    return insn.Op1.value
         return -1
     
