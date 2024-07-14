@@ -36,7 +36,7 @@ class IDARustDemangler():
             self.queue[address, hash] = symbol
         else:
             # If the hash is not present
-            if '::' in symbol:
+            if symbol.lstrip("_").startswith("R") or '::' in symbol:
                 self.queue[address, ""] = symbol
 
     def resolve(self):
